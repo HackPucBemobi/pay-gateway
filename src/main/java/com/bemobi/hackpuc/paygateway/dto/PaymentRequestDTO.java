@@ -16,11 +16,9 @@ import javax.validation.constraints.NotNull;
 public class PaymentRequestDTO {
     @SerializedName("merchantId")
     @Expose
-    @NotNull
     private String merchantId;
     @SerializedName("merchantKey")
     @Expose
-    @NotNull
     private String merchantKey;
     @SerializedName("merchantOrderId")
     @Expose

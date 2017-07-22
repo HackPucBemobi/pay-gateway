@@ -2,7 +2,6 @@ package com.bemobi.hackpuc.paygateway.controller;
 
 import com.bemobi.hackpuc.paygateway.client.CieloClient;
 import com.bemobi.hackpuc.paygateway.client.model.PaymentResponse;
-import com.bemobi.hackpuc.paygateway.client.model.PaymentRequest;
 import com.bemobi.hackpuc.paygateway.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,5 +62,19 @@ public class PaymentController {
         }
 
         return ResponseEntity.ok().body(creditCard);
+    }
+
+    @PostMapping(value = "/token/payment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Result> paymentByToken(@Valid @RequestBody PaymentRequestDTO request, BindingResult bindingResult,
+                 @RequestHeader("MerchantId") String merchantId, @RequestHeader("MerchantKey") String merchantKey) throws URISyntaxException {
+
+        if(!bindingResult.hasErrors()) {
+            final PaymentResponse paymentResponse = cieloClient.paymentByToken(request, new MerchantDTO(merchantId, merchantKey));
+
+            if(paymentResponse.getPayment().getReturnCode().equals("4")){
+                return ResponseEntity.created(new URI("/token/payment")).body(new Result("success"));
+            }
+        }
+        return ResponseEntity.ok().body(new Result("failed"));
     }
 }

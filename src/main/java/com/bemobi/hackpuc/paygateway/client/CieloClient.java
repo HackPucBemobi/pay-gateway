@@ -113,5 +113,39 @@ public class CieloClient {
         return gson.fromJson(entity.getBody(), SimpleCreditCardDTO.class);
     }
 
+    public PaymentResponse paymentByToken(PaymentRequestDTO request, MerchantDTO merchantDTO) {
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("MerchantId", merchantDTO.getMerchantId());
+        headers.set("MerchantKey", merchantDTO.getMerchantKey());
+
+        final PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setMerchantOrderId(request.getMerchantOrderId());
+
+        final Customer customer = new Customer();
+        customer.setName(request.getCustomer().getName());
+        paymentRequest.setCustomer(customer);
+
+        final Payment payment = new Payment();
+        payment.setType(request.getPayment().getType());
+        payment.setAmount(request.getPayment().getAmount());
+        payment.setInstallments(request.getPayment().getInstallments());
+        payment.setSoftDescriptor(request.getPayment().getSoftDescriptor());
+        paymentRequest.setPayment(payment);
+
+        final CreditCard creditCard = new CreditCard();
+        creditCard.setCardToken(request.getPayment().getCreditCard().getCardToken());
+        creditCard.setSecurityCode(request.getPayment().getCreditCard().getSecurityCode());
+        creditCard.setBrand(request.getPayment().getCreditCard().getBrand());
+        payment.setCreditCard(creditCard);
+
+        final HttpEntity httpEntity = new HttpEntity(paymentRequest, headers);
+
+        final ResponseEntity<String> responseEntity = restTemplate.postForEntity(host + SALES_PATH, httpEntity, String.class);
+
+        return gson.fromJson(responseEntity.getBody(), PaymentResponse.class);
+    }
+
 
 }

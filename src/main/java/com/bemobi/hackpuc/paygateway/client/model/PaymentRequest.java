@@ -4,12 +4,15 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by alessandro.santos on 7/21/17.
  */
 
 @Data
-public class PayResponse {
+public class PaymentRequest {
+
     @SerializedName("MerchantOrderId")
     @Expose
     private String merchantOrderId;

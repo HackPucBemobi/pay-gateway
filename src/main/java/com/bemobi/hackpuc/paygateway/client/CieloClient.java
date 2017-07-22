@@ -1,7 +1,7 @@
 package com.bemobi.hackpuc.paygateway.client;
 
-import com.bemobi.hackpuc.paygateway.client.model.PayRequest;
-import com.bemobi.hackpuc.paygateway.client.model.PayResponse;
+import com.bemobi.hackpuc.paygateway.client.model.*;
+import com.bemobi.hackpuc.paygateway.dto.PaymentRequestDTO;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,18 +29,42 @@ public class CieloClient {
     @Autowired
     private Gson gson;
 
-    public PayResponse pay(PayRequest request) {
+    public PaymentResponse pay(PaymentRequestDTO request) {
 
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("MerchantId", "872fbdc6-4ff7-441a-94ce-536c3f1500f8");
-        headers.set("MerchantKey", "XPIUJIUHHVSIQWBPUMXRZJBERBOIAIOZNRRWCHEY");
+        headers.set("MerchantId", request.getMerchantId());
+        headers.set("MerchantKey", request.getMerchantKey());
 
-        HttpEntity<PayResponse> entity = new HttpEntity(request, headers);
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setMerchantOrderId(request.getMerchantOrderId());
+
+        Customer customer = new Customer();
+        customer.setName(request.getCustomer().getName());
+        paymentRequest.setCustomer(customer);
+
+        Payment payment = new Payment();
+        payment.setType(request.getPayment().getType());
+        payment.setAmount(request.getPayment().getAmount());
+        payment.setInstallments(request.getPayment().getInstallments());
+        payment.setSoftDescriptor(request.getPayment().getSoftDescriptor());
+
+        CreditCard creditCard = new CreditCard();
+        creditCard.setCardNumber(request.getPayment().getCreditCard().getCardNumber());
+        creditCard.setHolder(request.getPayment().getCreditCard().getHolder());
+        creditCard.setExpirationDate(request.getPayment().getCreditCard().getExpirationDate());
+        creditCard.setSecurityCode(request.getPayment().getCreditCard().getSecurityCode());
+        creditCard.setBrand(request.getPayment().getCreditCard().getBrand());
+
+        payment.setCreditCard(creditCard);
+        paymentRequest.setPayment(payment);
+
+
+        HttpEntity<PaymentResponse> entity = new HttpEntity(paymentRequest, headers);
 
         final ResponseEntity<String> responseEntity = restTemplate.postForEntity(host + PAY_PATH, entity, String.class);
 
-        return gson.fromJson(responseEntity.getBody(), PayResponse.class);
+        return gson.fromJson(responseEntity.getBody(), PaymentResponse.class);
     }
 
 

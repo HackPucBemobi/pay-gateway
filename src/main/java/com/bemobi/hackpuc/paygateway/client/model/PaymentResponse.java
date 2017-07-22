@@ -9,8 +9,7 @@ import lombok.Data;
  */
 
 @Data
-public class PayRequest {
-
+public class PaymentResponse {
     @SerializedName("MerchantOrderId")
     @Expose
     private String merchantOrderId;

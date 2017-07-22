@@ -1,0 +1,7 @@
+
+
+
+application:
+  clielo:
+    host: https://apisandbox.cieloecommerce.cielo.com.br/
+

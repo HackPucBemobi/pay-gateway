@@ -30,4 +30,7 @@ public class CreditCard {
     @SerializedName("SecurityCode")
     @Expose
     private String securityCode;
+    @SerializedName("CustomerName")
+    @Expose
+    private String customerName;
 }

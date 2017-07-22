@@ -28,4 +28,7 @@ public class CreditCardDTO {
     @SerializedName("securityCode")
     @Expose
     private String securityCode;
+    @SerializedName("CustomerName")
+    @Expose
+    private String customerName;
 }
